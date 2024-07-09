@@ -115,7 +115,7 @@ const RatingCardComponent = () => {
         Get Rated
       </h3>
       
-      <p className="text-gray-300">Other users review your resume with a "Hire" or "Pass" rating.</p>
+      <p className="text-gray-300">Other users review your resume with a &ldquo;Hire&rdquo; or &ldquo;Pass&rdquo; rating.</p>
       <div className="bg-bg-secondary rounded-lg p-3 my-3">
         <div className="flex justify-center items-center space-x-2 mb-2">
           <button 
