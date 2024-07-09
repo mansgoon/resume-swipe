@@ -154,7 +154,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center justify-between w-full">
             <div className="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left">
               <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 leading-tight">
-                Create resume's recruiters{' '}
+                Create resume&apos;s recruiters{' '}
                 <span className="underline decoration-primary decoration-dashed decoration-3 underline-offset-4">
                   actually
                 </span>{' '}
@@ -244,7 +244,7 @@ export default function Home() {
               {
                 icon: faChartLine,
                 title: 'Continuous Improvement',
-                desc: 'Track your resume\'s performance and refine it based on actionable advice.'
+                desc: 'Track your resumes performance and refine it based on actionable advice.'
               },
               {
                 icon: faGlobe,
