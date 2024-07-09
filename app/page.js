@@ -154,7 +154,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center justify-between w-full">
             <div className="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left">
               <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 leading-tight">
-                Create resume&apos;s recruiters{' '}
+                Create resumes recruiters{' '}
                 <span className="underline decoration-primary decoration-dashed decoration-3 underline-offset-4">
                   actually
                 </span>{' '}
@@ -226,14 +226,27 @@ export default function Home() {
         </div>
       </main>
 
+      {/* "How It Works" section - Now using bg-bg-section1 */}
       <section className="bg-bg-section1 py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-16">How It Works</h2>
+          <div className="flex flex-wrap justify-between">
+            <ResumeProcessComponent />
+            <RatingCardComponent />
+            <FeedbackCardComponent />
+          </div>
+        </div>
+      </section>
+
+      {/* "Why use ResumeSwipe?" section - Now using bg-bg-section2 */}
+      <section className="bg-bg-section2 py-24">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16">Why use ResumeSwipe?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { 
                 icon: faUsers,
-                title: 'Community-Driven Feedback',
+                title: 'Community Feedback',
                 desc: 'Get valuable insights from a diverse pool of professionals and recruiters.'
               },
               {
@@ -263,17 +276,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <section className="bg-bg-section2 py-24">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-16">How It Works</h2>
-        <div className="flex flex-wrap justify-between">
-          <ResumeProcessComponent />
-          <RatingCardComponent />
-          <FeedbackCardComponent />
-        </div>
-      </div>
-    </section>
 
       <footer className="bg-bg-footer py-6 text-center">
         <div className="container mx-auto px-4">

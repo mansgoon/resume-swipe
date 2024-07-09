@@ -74,16 +74,16 @@ const BrowsePage = () => {
                 ))}
               </div>
               <span className="text-[#3498db] cursor-pointer text-sm font-medium" onClick={viewMoreComments}>View more comments</span>
-              <form className="flex mt-4" onSubmit={addComment}>
+              <form className="flex flex-col sm:flex-row mt-4" onSubmit={addComment}>
                 <input 
                   type="text" 
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="flex-grow bg-[#2c2c2c] border border-[#333] rounded-full py-2 px-4 text-[#e0e0e0] text-sm" 
+                  className="flex-grow bg-[#2c2c2c] border border-[#333] rounded-full py-2 px-4 text-[#e0e0e0] text-sm mb-2 sm:mb-0" 
                   placeholder="Add a comment..." 
                   required 
                 />
-                <button type="submit" className="bg-[#3498db] text-white rounded-full px-5 py-2 ml-2 cursor-pointer transition-colors duration-300 hover:bg-[#2980b9] text-sm font-medium">Post</button>
+                <button type="submit" className="bg-[#3498db] text-white rounded-full px-5 py-2 sm:ml-2 cursor-pointer transition-colors duration-300 hover:bg-[#2980b9] text-sm font-medium">Post</button>
               </form>
             </div>
           </div>
