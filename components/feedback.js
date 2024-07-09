@@ -73,7 +73,7 @@ const FeedbackCardComponent = () => {
           messageIndex = (messageIndex + 1) % messages.length;
           animateChat();
         }, 2000);
-      }, 5000);  // Increased from 2000 to 4000
+      }, 4000);  // Increased from 2000 to 4000
     };
 
     animateChat();
@@ -90,7 +90,7 @@ const FeedbackCardComponent = () => {
         3
       </div>
       <h3 className="text-xl font-semibold mb-2">
-        Receive Feedback <EmojiDisplay name="speech_balloon" size={24} />
+        Receive Feedback
       </h3>
       
       <p className="text-gray-300">Get detailed comments on what works and areas for improvement.</p>
@@ -114,7 +114,7 @@ const FeedbackCardComponent = () => {
           </div>
         </div>
         <div className="text-xs opacity-80 mt-2">
-          User feedback in action
+          Provide or receive feedback.
         </div>
       </div>
     </div>

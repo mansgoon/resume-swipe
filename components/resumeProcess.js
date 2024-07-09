@@ -100,7 +100,7 @@ const ResumeProcessComponent = () => {
         1
       </div>
       <h3 className="text-xl font-semibold mb-2">
-        Upload Your Resume <EmojiDisplay name="page_facing_up" size={24} />
+        Upload Your Resume
       </h3>
       <p className="text-gray-300 mb-4">Share your resume anonymously with our community.</p>
       
@@ -110,14 +110,14 @@ const ResumeProcessComponent = () => {
         </div>
         <div className="w-full bg-input-bg h-1.5 rounded-full mb-2 overflow-hidden">
           <div 
-            className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
+            className="bg-secondary h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
         <div className="text-xs opacity-80 h-4"> {/* Fixed height to prevent layout shift */}
           {isComplete ? (
-            <span className="flex items-center justify-center animate-bounce">
-              Success <EmojiDisplay name="check_mark" size={16} />
+            <span className="flex items-center justify-center">
+              Success!
             </span>
           ) : (
             stages[currentStage]

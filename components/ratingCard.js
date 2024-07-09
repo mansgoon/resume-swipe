@@ -112,7 +112,7 @@ const RatingCardComponent = () => {
         2
       </div>
       <h3 className="text-xl font-semibold mb-2">
-        Get Rated <EmojiDisplay name="thumbs_up" size={24} />
+        Get Rated
       </h3>
       
       <p className="text-gray-300">Other users review your resume with a "Hire" or "Pass" rating.</p>
@@ -130,7 +130,7 @@ const RatingCardComponent = () => {
               className="ml-2 transition-transform duration-300 ease-in-out"
               style={{ transform: itemStates.hire.voted ? 'scale(1.1)' : 'scale(1)' }}
             >
-              <EmojiDisplay name="party_popper" size={20} />
+              <EmojiDisplay name="party_popper" size={18} />
             </span>
           </button>
           <button 
@@ -145,12 +145,12 @@ const RatingCardComponent = () => {
               className="ml-2 transition-transform duration-300 ease-in-out"
               style={{ transform: itemStates.pass.voted ? 'scale(1.1)' : 'scale(1)' }}
             >
-              <EmojiDisplay name="x" size={20} />
+              <EmojiDisplay name="x" size={18} />
             </span>
           </button>
         </div>
         <div className="text-xs opacity-80">
-          Users are reviewing your resume
+          Users are reviewing your resume.
         </div>
       </div>
     </div>
