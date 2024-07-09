@@ -275,7 +275,7 @@ export default function Home() {
       </div>
     </section>
 
-      <footer className="bg-bg-footer py-12 text-center">
+      <footer className="bg-bg-footer py-6 text-center">
         <div className="container mx-auto px-4">
           <p className="">&copy; 2024 ResumeSwipe. All rights reserved.</p>
           <div className="space-x-4">

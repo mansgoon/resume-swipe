@@ -51,11 +51,18 @@ const EmojiDisplay = ({ name, size = 20 }) => {
 const FeedbackCardComponent = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentMessage, setCurrentMessage] = useState('');
+  const [currentFaceIndex, setCurrentFaceIndex] = useState(0);
   const messages = [
     "Great resume!",
     "Add more skills",
     "Love this resume",
     "Nice resume"
+  ];
+  const faces = [
+    "/faces/face1.png",
+    "/faces/face2.png",
+    "/faces/face3.png",
+    "/faces/face4.png"
   ];
 
   useEffect(() => {
@@ -68,12 +75,13 @@ const FeedbackCardComponent = () => {
 
       expandTimer = setTimeout(() => {
         setIsExpanded(false);
+        messageIndex = (messageIndex + 1) % messages.length;
+        setCurrentFaceIndex(messageIndex);
 
         contractTimer = setTimeout(() => {
-          messageIndex = (messageIndex + 1) % messages.length;
           animateChat();
         }, 2000);
-      }, 4000);  // Increased from 2000 to 4000
+      }, 4000);
     };
 
     animateChat();
@@ -96,8 +104,14 @@ const FeedbackCardComponent = () => {
       <p className="text-gray-300">Get detailed comments on what works and areas for improvement.</p>
       <div className="bg-bg-secondary rounded-lg p-3 my-3">
         <div className="relative w-48 h-10 mx-auto">
-          <div className="absolute left-0 bottom-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-            <EmojiDisplay name="speech_balloon" size={24} />
+          <div className="absolute left-0 bottom-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden border-2 border-primary">
+            <Image 
+              src={faces[currentFaceIndex]}
+              alt="Face"
+              width={40}
+              height={40}
+              className="object-cover"
+            />
           </div>
           <div 
             className={`absolute left-12 bottom-0 bg-bg rounded-2xl transition-all duration-300 ${isExpanded ? 'w-[140px] p-3' : 'w-[45px] p-0'} h-[40px] overflow-hidden flex items-center justify-center`}
