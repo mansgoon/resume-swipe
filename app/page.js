@@ -1,113 +1,297 @@
-import Image from "next/image";
+'use client'
+import Head from 'next/head';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers, faShieldAlt, faChartLine, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import confetti from 'canvas-confetti';
+import Navbar from '@/components/navbar';
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+};
+
+const IPhoneEmoji = ({ name, size = 24 }) => (
+  <Image 
+    src={`/emojis/${name}.png`} 
+    alt={name} 
+    width={size} 
+    height={size}
+    className="inline-block"
+  />
+);
+
+const EmojiDisplay = ({ name, size = 24 }) => {
+  const isMobile = useIsMobile();
+  const emojiMap = {
+    'rocket': '🚀',
+    'party_popper': '🎉',
+    'x': '❌',
+    'page_facing_up': '📄',
+    'thumbs_up': '👍',
+    'speech_balloon': '💬'
+  };
+
+  if (isMobile) {
+    return (
+      <span style={{ fontSize: `${size}px` }} role="img" aria-label={name}>
+        {emojiMap[name] || ''}
+      </span>
+    );
+  } else {
+    return <IPhoneEmoji name={name} size={size} />;
+  }
+};
 
 export default function Home() {
+  const [votes, setVotes] = useState({ tip: 37, template: 28, ai: 22 });
+  const [rejects, setRejects] = useState({ tip: 5, template: 3, ai: 7 });
+  const [itemStates, setItemStates] = useState({
+    tip: { voted: false, rejected: false },
+    template: { voted: false, rejected: false },
+    ai: { voted: false, rejected: false }
+  });
+  const buttonRefs = useRef({});
+
+  const initialVotes = useRef(votes);
+  const initialRejects = useRef(rejects);
+
+  const triggerConfetti = useCallback((buttonEl) => {
+    const rect = buttonEl.getBoundingClientRect();
+    const buttonCenterX = rect.left + rect.width / 2;
+    const buttonCenterY = rect.top + rect.height / 2;
+
+    const createCircularConfetti = (angle) => {
+      const radians = angle * (Math.PI / 180);
+      const x = buttonCenterX + Math.cos(radians) * 20;
+      const y = buttonCenterY + Math.sin(radians) * 20;
+
+      confetti({
+        particleCount: 1,
+        startVelocity: 10,
+        spread: 360,
+        origin: {
+          x: x / window.innerWidth,
+          y: y / window.innerHeight
+        },
+        colors: ['#3498db'],
+        shapes: ['circle'],
+        scalar: 0.5,
+        ticks: 50,
+        gravity: 0.5,
+        decay: 0.8,
+      });
+    };
+
+    for (let angle = 0; angle < 360; angle += 15) {
+      createCircularConfetti(angle);
+    }
+  }, []);
+
+  const handleVote = useCallback((item) => {
+    setItemStates(prev => {
+      const newState = { ...prev[item], voted: !prev[item].voted, rejected: false };
+      return { ...prev, [item]: newState };
+    });
+
+    setVotes(prev => {
+      const newVoteCount = prev[item] === initialVotes.current[item] && !itemStates[item].voted
+        ? prev[item] + 1
+        : initialVotes.current[item];
+      return { ...prev, [item]: newVoteCount };
+    });
+
+    setRejects(prev => ({ ...prev, [item]: initialRejects.current[item] }));
+
+    if (!itemStates[item].voted && buttonRefs.current[item]) {
+      triggerConfetti(buttonRefs.current[item]);
+    }
+  }, [itemStates, triggerConfetti]);
+
+  const handleReject = useCallback((item) => {
+    setItemStates(prev => {
+      const newState = { ...prev[item], rejected: !prev[item].rejected, voted: false };
+      return { ...prev, [item]: newState };
+    });
+
+    setRejects(prev => {
+      const newRejectCount = prev[item] === initialRejects.current[item] && !itemStates[item].rejected
+        ? prev[item] + 1
+        : initialRejects.current[item];
+      return { ...prev, [item]: newRejectCount };
+    });
+
+    setVotes(prev => ({ ...prev, [item]: initialVotes.current[item] }));
+  }, [itemStates]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <Head>
+        <title>ResumeSwipe - Collaborative Resume Review Platform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap" rel="stylesheet" />
+      </Head>
+
+      <Navbar />
+
+      <main className="bg-bg text-text">
+        <div className="container mx-auto px-4 pt-32 pb-24 min-h-screen flex items-center">
+          <div className="flex flex-col lg:flex-row items-center justify-between w-full">
+            <div className="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left">
+              <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 leading-tight">
+                Create resume's recruiters{' '}
+                <span className="underline decoration-primary decoration-dashed decoration-3 underline-offset-4">
+                  actually
+                </span>{' '}
+                like reading
+              </h1>
+              <p className="text-xl lg:text-xl mb-10 max-w-2xl mx-auto lg:mx-0">
+                Collect feedback from other users, curate your resume, get hired.
+              </p>
+              <Link
+                href="/collect-feedback"
+                className="bg-primary hover:bg-blue-600 text-bg font-bold py-4 px-8 rounded-lg transition-colors text-lg inline-block"
+              >
+                Get Feedback Now
+              </Link>
+              <p className="text-sm text-gray-500 mt-8">Your perfect resume. 100% free.</p>
+            </div>
+            <div className="lg:w-1/2 bg-bg-card rounded-xl p-8 shadow-lg max-w-xl w-full">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg uppercase tracking-wider font-semibold">Hire or pass</h3>
+                <span className="bg-secondary text-bg text-sm font-bold py-2 px-3 rounded-full flex items-center">
+                  Get Hired <EmojiDisplay name="rocket" size={20} />
+                </span>
+              </div>
+              {[
+                { title: 'Software Developer Resume', key: 'tip', desc: 'Developer with 5+ years in full-stack web development...' },
+                { title: 'Marketing Specialist Resume', key: 'template', desc: 'Results-driven marketer with expertise in digital campaigns...' },
+                { title: 'Data Analyst Resume', key: 'ai', desc: 'Analytical professional skilled in Python, Data visualization...' }
+              ].map((item) => (
+                <div key={item.key} className="mb-6 pb-6 border-b border-gray-700 last:border-b-0 last:mb-0 last:pb-0">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-semibold text-lg">{item.title}</span>
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        ref={el => buttonRefs.current[item.key] = el}
+                        onClick={() => handleVote(item.key)}
+                        className={`rounded-full py-2 px-4 text-base flex items-center transition-colors duration-300 ease-in-out bg-bg hover:bg-bg ${
+                          itemStates[item.key].voted ? 'border-2 border-primary' : 'border-2 border-transparent'
+                        }`}
+                      >
+                        <span>{votes[item.key]}</span>
+                        <span 
+                          className="ml-2 transition-transform duration-300 ease-in-out"
+                          style={{ transform: itemStates[item.key].voted ? 'scale(1.2)' : 'scale(1)' }}
+                        >
+                          <EmojiDisplay name="party_popper" size={24} />
+                        </span>
+                      </button>
+                      <button 
+                        onClick={() => handleReject(item.key)}
+                        className={`rounded-full py-2 px-4 text-base flex items-center transition-colors duration-300 ease-in-out bg-bg hover:bg-bg ${
+                          itemStates[item.key].rejected ? 'border-2 border-red-500' : 'border-2 border-transparent'
+                        }`}
+                      >
+                        <span>{rejects[item.key]}</span>
+                        <span 
+                          className="ml-2 transition-transform duration-300 ease-in-out"
+                          style={{ transform: itemStates[item.key].rejected ? 'scale(1.2)' : 'scale(1)' }}
+                        >
+                          <EmojiDisplay name="x" size={24} />
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-base text-gray-400">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <section className="bg-bg-section1 py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-16">Why use ResumeSwipe?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { 
+                icon: faUsers,
+                title: 'Community-Driven Feedback',
+                desc: 'Get valuable insights from a diverse pool of professionals and recruiters.'
+              },
+              {
+                icon: faShieldAlt,
+                title: 'Anonymous Reviews',
+                desc: 'Receive honest feedback while maintaining your privacy.'
+              },
+              {
+                icon: faChartLine,
+                title: 'Continuous Improvement',
+                desc: 'Track your resume\'s performance and refine it based on actionable advice.'
+              },
+              {
+                icon: faGlobe,
+                title: 'Global Perspective',
+                desc: 'Gain insights from professionals around the world in various industries.'
+              }
+            ].map((feature) => (
+              <div key={feature.title} className="bg-bg-card rounded-lg p-6 text-center hover:transform hover:-translate-y-2 transition-transform">
+                <div className="mb-4">
+                  <FontAwesomeIcon icon={feature.icon} className="text-primary text-5xl" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-300">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+      <section className="bg-bg-section2 py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-16">How It Works</h2>
+          <div className="flex flex-wrap justify-between">
+            {[
+              { number: 1, title: 'Upload Your Resume', desc: 'Share your resume anonymously with our community.', icon: 'page_facing_up' },
+              { number: 2, title: 'Get Rated', desc: 'Other users review your resume with a "Hire" or "Pass" rating.', icon: 'thumbs_up' },
+              { number: 3, title: 'Receive Feedback', desc: 'Get detailed comments on what works and areas for improvement.', icon: 'speech_balloon' }
+            ].map((step) => (
+              <div key={step.number} className="w-full md:w-[30%] bg-bg-card rounded-lg p-6 text-center mb-8 md:mb-0">
+                <div className="w-16 h-16 bg-primary text-bg rounded-full text-2xl font-bold flex items-center justify-center mx-auto mb-4">
+                  {step.number}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">
+                  {step.title} <IPhoneEmoji name={step.icon} size={24} />
+                </h3>
+                <p className="text-gray-300">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <footer className="bg-bg-footer py-12 text-center">
+        <div className="container mx-auto px-4">
+          <p className="">&copy; 2024 ResumeSwipe. All rights reserved.</p>
+          <div className="space-x-4">
+            {/* Add social media links here */}
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
