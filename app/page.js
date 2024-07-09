@@ -7,6 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faShieldAlt, faChartLine, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import confetti from 'canvas-confetti';
 import Navbar from '@/components/navbar';
+import ResumeProcessComponent from '@/components/resumeProcess';
+import RatingCardComponent from '@/components/ratingCard';
+import FeedbackCardComponent from '@/components/feedback';
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -23,7 +26,7 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-const IPhoneEmoji = ({ name, size = 24 }) => (
+const IPhoneEmoji = ({ name, size = 20 }) => (
   <Image 
     src={`/emojis/${name}.png`} 
     alt={name} 
@@ -33,7 +36,7 @@ const IPhoneEmoji = ({ name, size = 24 }) => (
   />
 );
 
-const EmojiDisplay = ({ name, size = 24 }) => {
+const EmojiDisplay = ({ name, size = 20 }) => {
   const isMobile = useIsMobile();
   const emojiMap = {
     'rocket': '🚀',
@@ -194,9 +197,9 @@ export default function Home() {
                         <span>{votes[item.key]}</span>
                         <span 
                           className="ml-2 transition-transform duration-300 ease-in-out"
-                          style={{ transform: itemStates[item.key].voted ? 'scale(1.2)' : 'scale(1)' }}
+                          style={{ transform: itemStates[item.key].voted ? 'scale(1.1)' : 'scale(1)' }}
                         >
-                          <EmojiDisplay name="party_popper" size={24} />
+                          <EmojiDisplay name="party_popper" size={20} />
                         </span>
                       </button>
                       <button 
@@ -208,9 +211,9 @@ export default function Home() {
                         <span>{rejects[item.key]}</span>
                         <span 
                           className="ml-2 transition-transform duration-300 ease-in-out"
-                          style={{ transform: itemStates[item.key].rejected ? 'scale(1.2)' : 'scale(1)' }}
+                          style={{ transform: itemStates[item.key].rejected ? 'scale(1.1)' : 'scale(1)' }}
                         >
-                          <EmojiDisplay name="x" size={24} />
+                          <EmojiDisplay name="x" size={20} />
                         </span>
                       </button>
                     </div>
@@ -262,27 +265,15 @@ export default function Home() {
       </section>
 
       <section className="bg-bg-section2 py-24">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">How It Works</h2>
-          <div className="flex flex-wrap justify-between">
-            {[
-              { number: 1, title: 'Upload Your Resume', desc: 'Share your resume anonymously with our community.', icon: 'page_facing_up' },
-              { number: 2, title: 'Get Rated', desc: 'Other users review your resume with a "Hire" or "Pass" rating.', icon: 'thumbs_up' },
-              { number: 3, title: 'Receive Feedback', desc: 'Get detailed comments on what works and areas for improvement.', icon: 'speech_balloon' }
-            ].map((step) => (
-              <div key={step.number} className="w-full md:w-[30%] bg-bg-card rounded-lg p-6 text-center mb-8 md:mb-0">
-                <div className="w-16 h-16 bg-primary text-bg rounded-full text-2xl font-bold flex items-center justify-center mx-auto mb-4">
-                  {step.number}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  {step.title} <IPhoneEmoji name={step.icon} size={24} />
-                </h3>
-                <p className="text-gray-300">{step.desc}</p>
-              </div>
-            ))}
-          </div>
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold text-center mb-16">How It Works</h2>
+        <div className="flex flex-wrap justify-between">
+          <ResumeProcessComponent />
+          <RatingCardComponent />
+          <FeedbackCardComponent />
         </div>
-      </section>
+      </div>
+    </section>
 
       <footer className="bg-bg-footer py-12 text-center">
         <div className="container mx-auto px-4">
