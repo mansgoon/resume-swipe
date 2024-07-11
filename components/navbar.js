@@ -25,7 +25,7 @@ const Navbar = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center text-2xl font-bold text-primary">
             <Image src="/logo.png" alt="ResumeSwipe Logo" width={38} height={38} className="mr-2" />
-            ResumeSwipe
+            SwipeResume
           </Link>
           <ul className="hidden md:flex space-x-8">
             {['Browse', 'Upload', 'Leaderboards', 'Contact'].map((item) => (

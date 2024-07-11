@@ -150,7 +150,7 @@ const RatingCardComponent = () => {
           </button>
         </div>
         <div className="text-xs opacity-80">
-          Users are reviewing your resume.
+          Swipe right or left to &ldquo;Hire&rdquo; or &ldquo;Pass&rdquo;.
         </div>
       </div>
     </div>
