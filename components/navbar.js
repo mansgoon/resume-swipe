@@ -37,107 +37,63 @@ const Navbar = () => {
             ))}
           </ul>
           <button 
-            className={`hamburger-menu md:hidden ${isMenuOpen ? 'open' : ''}`}
+            className="md:hidden z-50 relative w-10 h-10 focus:outline-none"
             onClick={toggleMenu}
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           >
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+            <span className="sr-only">Menu</span>
+            <div className="block w-5 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <span
+                aria-hidden="true"
+                className={`block absolute h-0.5 w-5 bg-current transform transition duration-300 ease-in-out ${
+                  isMenuOpen ? 'rotate-45' : '-translate-y-1.5'
+                }`}
+              ></span>
+              <span
+                aria-hidden="true"
+                className={`block absolute h-0.5 w-5 bg-current transform transition duration-300 ease-in-out ${
+                  isMenuOpen ? 'opacity-0' : ''
+                }`}
+              ></span>
+              <span
+                aria-hidden="true"
+                className={`block absolute h-0.5 w-5 bg-current transform transition duration-300 ease-in-out ${
+                  isMenuOpen ? '-rotate-45' : 'translate-y-1.5'
+                }`}
+              ></span>
+            </div>
           </button>
         </div>
       </nav>
 
-      {isMenuOpen && <div className="mobile-menu-overlay" onClick={toggleMenu}></div>}
+      <div 
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
+          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={toggleMenu}
+      ></div>
 
-      <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
-        <ul>
-          {['Browse', 'Upload', 'Leaderboards', 'Contact'].map((item) => (
-            <li key={item}>
-              <Link href={`/${item.toLowerCase()}`} className="text-text hover:text-primary transition-colors" onClick={toggleMenu}>
-                {item}
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <div 
+        className={`fixed top-0 right-0 w-64 h-full bg-bg-nav z-40 shadow-lg transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full pt-20 px-6">
+          <ul className="space-y-4">
+            {['Browse', 'Upload', 'Leaderboards', 'Contact'].map((item) => (
+              <li key={item}>
+                <Link 
+                  href={`/${item.toLowerCase()}`} 
+                  className="text-text hover:text-primary transition-colors text-lg font-medium"
+                  onClick={toggleMenu}
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-
-      <style jsx>{`
-        .hamburger-menu {
-          cursor: pointer;
-          width: 30px;
-          height: 20px;
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          z-index: 1004;
-          background: none;
-          border: none;
-          padding: 0;
-        }
-
-        .hamburger-menu span {
-          display: block;
-          position: absolute;
-          height: 3px;
-          width: 100%;
-          background: var(--text-color);
-          border-radius: 3px;
-          opacity: 1;
-          left: 0;
-          transform: rotate(0deg);
-          transition: .25s ease-in-out;
-        }
-
-        .hamburger-menu span:nth-child(1) { top: 0px; }
-        .hamburger-menu span:nth-child(2), .hamburger-menu span:nth-child(3) { top: 8px; }
-        .hamburger-menu span:nth-child(4) { top: 16px; }
-
-        .hamburger-menu.open span:nth-child(1) { top: 8px; width: 0%; left: 50%; }
-        .hamburger-menu.open span:nth-child(2) { transform: rotate(45deg); }
-        .hamburger-menu.open span:nth-child(3) { transform: rotate(-45deg); }
-        .hamburger-menu.open span:nth-child(4) { top: 8px; width: 0%; left: 50%; }
-
-        .mobile-menu-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(0, 0, 0, 0.5);
-          z-index: 1002;
-        }
-
-        .mobile-menu {
-          position: fixed;
-          top: 0;
-          right: -70%;
-          width: 70%;
-          height: 100vh;
-          background-color: var(--nav-bg);
-          padding: 80px 20px 20px;
-          transition: right 0.3s ease-in-out;
-          z-index: 1003;
-        }
-
-        .mobile-menu.open { right: 0; }
-
-        .mobile-menu ul {
-          list-style-type: none;
-        }
-
-        .mobile-menu ul li {
-          margin-bottom: 20px;
-        }
-
-        .mobile-menu ul li a {
-          color: var(--text-color);
-          text-decoration: none;
-          font-size: 1.2rem;
-          font-weight: 500;
-        }
-      `}</style>
     </>
   );
 };
