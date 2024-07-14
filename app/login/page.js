@@ -64,7 +64,7 @@ const LoginPage = () => {
             </button>
           </form>
           <p className="mt-4 text-center text-text">
-            Don't have an account? <Link href="/register" className="text-primary hover:underline">Sign up</Link>
+            Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline">Sign up</Link>
           </p>
           <div className="mt-6 text-center text-text">
             <div className="relative">

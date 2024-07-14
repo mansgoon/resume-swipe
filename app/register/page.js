@@ -88,7 +88,7 @@ const RegisterPage = () => {
             Already have an account? <Link href="/login" className="text-primary hover:underline">Log in</Link>
           </p>
           <p className="mt-4 text-sm text-text text-center text-[#888]">
-            By registering, you agree to ResumeSwipe's{' '}
+            By registering, you agree to ResumeSwipe&apos;s{' '}
             <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and{' '}
             <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
           </p>
