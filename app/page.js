@@ -10,6 +10,7 @@ import Navbar from '@/components/navbar';
 import ResumeProcessComponent from '@/components/resumeProcess';
 import RatingCardComponent from '@/components/ratingCard';
 import FeedbackCardComponent from '@/components/feedback';
+import Footer from '@/components/footer';
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -164,7 +165,7 @@ export default function Home() {
                 Collect feedback from other users, curate your resume, get hired.
               </p>
               <Link
-                href="/collect-feedback"
+                href="/register"
                 className="bg-primary hover:bg-blue-600 text-bg font-bold py-4 px-8 rounded-lg transition-colors text-lg inline-block"
               >
                 Get Feedback Now
@@ -277,14 +278,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-bg-footer py-6 text-center">
-        <div className="container mx-auto px-4">
-          <p className="">&copy; 2024 ResumeSwipe. All rights reserved.</p>
-          <div className="space-x-4">
-            {/* Add social media links here */}
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

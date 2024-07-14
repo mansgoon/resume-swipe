@@ -27,14 +27,19 @@ const Navbar = () => {
             <Image src="/logo.png" alt="ResumeSwipe Logo" width={38} height={38} className="mr-2" />
             SwipeResume
           </Link>
-          <ul className="hidden md:flex space-x-8">
-            {['Browse', 'Upload', 'Leaderboards', 'Contact'].map((item) => (
+          <ul className="hidden md:flex space-x-8 items-center">
+            {['Browse', 'Upload', 'Leaderboards'].map((item) => (
               <li key={item}>
                 <Link href={`/${item.toLowerCase()}`} className="text-text hover:text-primary transition-colors">
                   {item}
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/login" className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base">
+                Login
+              </Link>
+            </li>
           </ul>
           <button 
             className="md:hidden z-50 relative w-10 h-10 focus:outline-none"
@@ -80,7 +85,7 @@ const Navbar = () => {
       >
         <div className="flex flex-col h-full pt-20 px-6">
           <ul className="space-y-4">
-            {['Browse', 'Upload', 'Leaderboards', 'Contact'].map((item) => (
+            {['Browse', 'Upload', 'Leaderboards'].map((item) => (
               <li key={item}>
                 <Link 
                   href={`/${item.toLowerCase()}`} 
@@ -91,6 +96,15 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href="/login"
+                className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base w-full inline-block text-center"
+                onClick={toggleMenu}
+              >
+                Login
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
