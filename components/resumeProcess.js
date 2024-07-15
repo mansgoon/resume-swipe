@@ -64,7 +64,7 @@ const ResumeProcessComponent = () => {
   ];
 
   const resetProcess = useCallback(() => {
-    console.log("Resetting process");
+    // console.log("Resetting process");
     setProgress(0);
     setCurrentStage(0);
     setIsComplete(false);
@@ -81,7 +81,7 @@ const ResumeProcessComponent = () => {
       } else {
         setProgress(100);
         setIsComplete(true);
-        console.log("Process complete");
+        // console.log("Process complete");
       }
     };
 

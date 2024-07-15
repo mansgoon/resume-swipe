@@ -11,6 +11,7 @@ import ResumeProcessComponent from '@/components/resumeProcess';
 import RatingCardComponent from '@/components/ratingCard';
 import FeedbackCardComponent from '@/components/feedback';
 import Footer from '@/components/footer';
+import Particles from '@/components/particles';
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -139,6 +140,7 @@ export default function Home() {
 
     setVotes(prev => ({ ...prev, [item]: initialVotes.current[item] }));
   }, [itemStates]);
+  
 
   return (
     <>
@@ -151,8 +153,9 @@ export default function Home() {
       <Navbar />
 
       <main className="bg-bg text-text">
-        <div className="container mx-auto px-4 pt-32 pb-24 min-h-screen flex items-center">
-          <div className="flex flex-col lg:flex-row items-center justify-between w-full">
+        <div className="container mx-auto px-4 pt-32 pb-24 min-h-screen flex items-center relative">
+          <Particles />
+          <div className="flex flex-col lg:flex-row items-center justify-between w-full relative z-10">
             <div className="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left">
               <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 leading-tight">
                 Create resumes recruiters{' '}
