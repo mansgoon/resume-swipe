@@ -43,7 +43,7 @@ export default function VerifyEmail() {
         
         {status === 'verifying' && (
           <div>
-            <p className="mb-4">We're verifying your email address...</p>
+            <p className="mb-4">We&apos;re verifying your email address...</p>
             <div className="loader mx-auto"></div>
           </div>
         )}
