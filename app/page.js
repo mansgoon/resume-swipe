@@ -157,7 +157,7 @@ export default function Home() {
           <Particles />
           <div className="flex flex-col lg:flex-row items-center justify-between w-full relative z-10">
             <div className="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left">
-              <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-extrabold mb-8 leading-tight text-balance">
                 Create resumes recruiters{' '}
                 <span className="underline decoration-primary decoration-dashed decoration-3 underline-offset-4">
                   actually

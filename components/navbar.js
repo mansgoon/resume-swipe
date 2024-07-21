@@ -1,10 +1,16 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -13,11 +19,30 @@ const Navbar = () => {
       }
     };
 
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push('/');
+  };
+
+  const navItems = ['Browse', 'Upload', 'Leaderboards'];
 
   return (
     <>
@@ -25,21 +50,45 @@ const Navbar = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center text-2xl font-bold text-primary">
             <Image src="/logo.png" alt="ResumeSwipe Logo" width={38} height={38} className="mr-2" />
-            SwipeResume
+            <span className='text-[#e5e7eb]'>resume</span>swipe
           </Link>
           <ul className="hidden md:flex space-x-8 items-center">
-            {['Browse', 'Upload', 'Leaderboards'].map((item) => (
+            {navItems.map((item) => (
               <li key={item}>
                 <Link href={`/${item.toLowerCase()}`} className="text-text hover:text-primary transition-colors">
                   {item}
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href="/login" className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base">
-                Login
-              </Link>
-            </li>
+            {session ? (
+              <li className="relative" ref={dropdownRef}>
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center focus:outline-none"
+                >
+                  <Image
+                    src={session.user.image || '/avatar.jpg'}
+                    alt="User Avatar"
+                    width={38}
+                    height={38}
+                    className="rounded-full"
+                  />
+                </button>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-bg-card rounded-md shadow-lg py-1">
+                    <Link href="/profile" className="block px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Profile</Link>
+                    <Link href="/settings" className="block px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Settings</Link>
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Logout</button>
+                  </div>
+                )}
+              </li>
+            ) : (
+              <li>
+                <Link href="/login" className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base">
+                  Login
+                </Link>
+              </li>
+            )}
           </ul>
           <button 
             className="md:hidden z-50 relative w-10 h-10 focus:outline-none"
@@ -71,6 +120,7 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Mobile menu overlay */}
       <div 
         className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
           isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -78,6 +128,7 @@ const Navbar = () => {
         onClick={toggleMenu}
       ></div>
 
+      {/* Mobile menu */}
       <div 
         className={`fixed top-0 right-0 w-64 h-full bg-bg-nav z-40 shadow-lg transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -85,7 +136,7 @@ const Navbar = () => {
       >
         <div className="flex flex-col h-full pt-20 px-6">
           <ul className="space-y-4">
-            {['Browse', 'Upload', 'Leaderboards'].map((item) => (
+            {navItems.map((item) => (
               <li key={item}>
                 <Link 
                   href={`/${item.toLowerCase()}`} 
@@ -96,15 +147,35 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/login"
-                className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base w-full inline-block text-center"
-                onClick={toggleMenu}
-              >
-                Login
-              </Link>
-            </li>
+            {session ? (
+              <>
+                <li>
+                  <Link href="/profile" className="text-text hover:text-primary transition-colors text-lg font-medium" onClick={toggleMenu}>
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/settings" className="text-text hover:text-primary transition-colors text-lg font-medium" onClick={toggleMenu}>
+                    Settings
+                  </Link>
+                </li>
+                <li>
+                  <button onClick={handleLogout} className="text-text hover:text-primary transition-colors text-lg font-medium w-full text-left">
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <Link
+                  href="/login"
+                  className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base w-full inline-block text-center"
+                  onClick={toggleMenu}
+                >
+                  Login
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

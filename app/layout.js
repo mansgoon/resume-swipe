@@ -1,5 +1,6 @@
 import { Poppins } from 'next/font/google'
 import "./globals.css";
+import Providers from '@/components/Providers'  // Adjust the import path as needed
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -15,7 +16,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} font-sans`}>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
