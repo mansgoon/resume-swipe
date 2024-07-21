@@ -1,4 +1,3 @@
-// app/api/auth/[...nextauth]/route.js
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -16,21 +15,25 @@ export const authOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error("Please enter both email and password")
         }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         })
 
-        if (!user || !user.emailVerified) {
-          return null
+        if (!user) {
+          throw new Error("No account found with this email address")
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email before logging in")
         }
 
         const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
 
         if (!isPasswordValid) {
-          return null
+          throw new Error("Invalid password")
         }
 
         return {
@@ -61,6 +64,7 @@ export const authOptions = {
   pages: {
     signIn: '/login',
   },
+  secret: process.env.NEXTAUTH_SECRET,
 }
 
 const handler = NextAuth(authOptions)

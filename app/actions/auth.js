@@ -51,41 +51,53 @@ export async function logout() {
     }
   }
 
-export async function login(email, password) {
+  export async function login(email, password) {
     try {
-      const user = await prisma.user.findUnique({ where: { email } })
+      const user = await prisma.user.findUnique({ where: { email } });
+  
       if (!user) {
-        return { success: false, message: 'Invalid credentials' }
+        return { 
+          success: false, 
+          message: 'No account found with this email address. Please check your email or sign up for a new account.'
+        };
       }
   
       if (!user.emailVerified) {
-        return { success: false, message: 'Please verify your email before logging in' }
+        return { 
+          success: false, 
+          message: 'Your email address has not been verified. Please check your inbox for a verification email and follow the instructions to activate your account.'
+        };
       }
   
-      const isPasswordValid = await bcrypt.compare(password, user.password)
+      const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return { success: false, message: 'Invalid credentials' }
+        return { 
+          success: false, 
+          message: 'Incorrect password. Please try again or use the "Forgot Password" option if you need to reset it.'
+        };
       }
   
-      // Generate a session token
+      // Generate and set session token
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.NEXTAUTH_SECRET,
         { expiresIn: '1d' }
-      )
+      );
   
-      // Set the token in an HTTP-only cookie
       cookies().set('next-auth.session-token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 86400 // 1 day in seconds
-      })
+      });
   
-      return { success: true, message: 'Logged in successfully' }
+      return { success: true, message: 'Logged in successfully. Welcome back!' };
     } catch (error) {
-      console.error('Login error:', error)
-      return { success: false, message: 'Login failed. Please try again.' }
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        message: 'An unexpected error occurred during login. Please try again later or contact support if the problem persists.'
+      };
     }
   }
 

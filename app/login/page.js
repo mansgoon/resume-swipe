@@ -13,6 +13,7 @@ const LoginPage = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,17 +22,24 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
-    const result = await signIn('credentials', {
-      redirect: false,
-      email: formData.email,
-      password: formData.password,
-    });
+    try {
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
 
-    if (result.error) {
-      setError(result.error);
-    } else {
-      router.push('/'); // Redirect to dashboard or home page
+      if (result.error) {
+        setError(result.error);
+      } else {
+        router.push('/'); // Redirect to dashboard or home page
+      }
+    } catch (error) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -79,8 +87,9 @@ const LoginPage = () => {
             <button
               type="submit"
               className="w-full bg-primary text-bg font-bold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-bg-card"
+              disabled={isLoading}
             >
-              Log In
+              {isLoading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
           <p className="mt-4 text-center text-text">
