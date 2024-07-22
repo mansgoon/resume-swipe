@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import { register } from '@/app/actions/auth';
+import PasswordInput from '@/components/passwordInput';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -25,12 +26,12 @@ const RegisterPage = () => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-
+  
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
+  
     const result = await register(formData.username, formData.email, formData.password);
     if (result.success) {
       setSuccessMessage(result.message);
@@ -57,7 +58,7 @@ const RegisterPage = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-[#333] rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-text"
+                className="w-full px-3 py-2 bg-[#333] border border-[#555] rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-text"
                 required
               />
             </div>
@@ -69,32 +70,26 @@ const RegisterPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-[#333] rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-text"
+                className="w-full px-3 py-2 bg-[#333] border border-[#555] rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-text"
                 required
               />
             </div>
             <div className="mb-4">
               <label htmlFor="password" className="block text-text font-bold mb-2">Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-[#333] rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-text"
-                required
               />
             </div>
             <div className="mb-6">
               <label htmlFor="confirmPassword" className="block text-text font-bold mb-2">Confirm Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-[#333] rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-text"
-                required
               />
             </div>
             <button
@@ -106,11 +101,6 @@ const RegisterPage = () => {
           </form>
           <p className="mt-4 text-center text-text">
             Already have an account? <Link href="/login" className="text-primary hover:underline">Log in</Link>
-          </p>
-          <p className="mt-4 text-sm text-text text-center text-[#888]">
-            By registering, you agree to ResumeSwipe&apos;s{' '}
-            <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and{' '}
-            <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
           </p>
         </div>
       </main>

@@ -1,30 +1,30 @@
 'use client'
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export function withAuth(WrappedComponent, requireAuth = true) {
   return function AuthComponent(props) {
     const router = useRouter();
+    const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-      const checkAuth = () => {
-        const isLoggedIn = document.cookie.includes('auth_token=');
+      if (status === 'loading') return; // Wait for the session to be checked
 
-        if (requireAuth && !isLoggedIn) {
-          router.push('/login');
-        } else if (!requireAuth && isLoggedIn) {
-          router.push('/');
-        } else {
-          setIsLoading(false);
-        }
-      };
+      if (requireAuth && !session) {
+        router.push('/login');
+      } else if (!requireAuth && session) {
+        router.push('/');
+      } else {
+        setIsLoading(false);
+      }
+    }, [session, status, router]);
 
-      checkAuth();
-    }, [router]);
-
-    if (isLoading) {
-      return <div>Loading...</div>; // Or any loading indicator
+    if (isLoading || status === 'loading') {
+      return <LoadingSpinner />;
     }
 
     return <WrappedComponent {...props} />;

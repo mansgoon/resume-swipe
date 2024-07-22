@@ -40,6 +40,7 @@ export const authOptions = {
           id: user.id,
           email: user.email,
           name: user.username,
+          hiresRating: user.hiresRating, // Include hiresRating
         }
       }
     })
@@ -51,14 +52,25 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.hiresRating = user.hiresRating // Add hiresRating to the token
       }
       return token
     },
     async session({ session, token }) {
       if (session?.user) {
-        session.user.id = token.id
+        const updatedUser = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { id: true, email: true, username: true, hiresRating: true }
+        });
+        
+        session.user = {
+          ...session.user,
+          id: updatedUser.id,
+          name: updatedUser.username,
+          hiresRating: updatedUser.hiresRating
+        };
       }
-      return session
+      return session;
     }
   },
   pages: {

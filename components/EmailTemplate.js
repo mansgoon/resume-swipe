@@ -18,7 +18,7 @@ const EmailTemplate = ({ verificationLink }) => (
             <img src="https://resume-swipe.vercel.app/logo.png" alt="ResumeSwipe Logo" width="38" height="38" style={{ marginRight: '10px' }} />
             <span style={{ fontSize: '24px', fontWeight: 'bold' }}>
               <span style={{ color: '#e5e7eb' }}>resume</span>
-              <span style={{ color: '#3b82f6' }}>swipe</span>
+              <span style={{ color: '#3498db' }}>swipe</span>
             </span>
           </td>
         </tr>

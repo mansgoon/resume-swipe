@@ -34,7 +34,7 @@ const LoginPage = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        router.push('/'); // Redirect to dashboard or home page
+        router.push('/profile'); // Redirect to dashboard or home page
       }
     } catch (error) {
       setError('An unexpected error occurred. Please try again.');
@@ -63,7 +63,7 @@ const LoginPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-[#333] rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-text"
+                className="w-full px-3 py-2 bg-[#333] border border-[#555] rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-text"
                 required
               />
             </div>
@@ -75,7 +75,7 @@ const LoginPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-[#333] rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-text"
+                className="w-full px-3 py-2 bg-[#333] border border-[#555] rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-text"
                 required
               />
             </div>
