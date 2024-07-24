@@ -14,33 +14,46 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        console.log("Authorize function called with email:", credentials?.email);
+
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter your email and password")
+          console.log("Missing email or password");
+          throw new Error("Please enter your email and password");
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
-        })
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email }
+          });
+          console.log("User found:", user ? "Yes" : "No");
 
-        if (!user) {
-          throw new Error("No account found with this email address")
-        }
+          if (!user) {
+            console.log("No account found for email:", credentials.email);
+            throw new Error("No account found with this email address");
+          }
 
-        if (!user.emailVerified) {
-          throw new Error("Please verify your email before logging in")
-        }
+          if (!user.emailVerified) {
+            console.log("Email not verified for user:", user.email);
+            throw new Error("Please verify your email before logging in");
+          }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+          console.log("Password valid:", isPasswordValid);
 
-        if (!isPasswordValid) {
-          throw new Error("Invalid password")
-        }
+          if (!isPasswordValid) {
+            throw new Error("Invalid password");
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.username,
-          hiresRating: user.hiresRating, // Include hiresRating
+          console.log("Authorization successful for user:", user.email);
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.username,
+            hiresRating: user.hiresRating,
+          };
+        } catch (error) {
+          console.error("Error in authorize function:", error);
+          throw error;
         }
       }
     })
@@ -50,25 +63,37 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
+      console.log("JWT callback called. User:", user ? "Yes" : "No");
       if (user) {
-        token.id = user.id
-        token.hiresRating = user.hiresRating // Add hiresRating to the token
+        token.id = user.id;
+        token.hiresRating = user.hiresRating;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      if (session?.user) {
-        const updatedUser = await prisma.user.findUnique({
-          where: { id: token.id },
-          select: { id: true, email: true, username: true, hiresRating: true }
-        });
-        
-        session.user = {
-          ...session.user,
-          id: updatedUser.id,
-          name: updatedUser.username,
-          hiresRating: updatedUser.hiresRating
-        };
+      console.log("Session callback called. Token:", token ? "Yes" : "No");
+      if (session?.user && token?.id) {
+        try {
+          console.log("Fetching updated user data for id:", token.id);
+          const updatedUser = await prisma.user.findUnique({
+            where: { id: parseInt(token.id) },
+            select: { id: true, email: true, username: true, hiresRating: true }
+          });
+          
+          if (updatedUser) {
+            console.log("Updated user data fetched successfully");
+            session.user = {
+              ...session.user,
+              id: updatedUser.id,
+              name: updatedUser.username,
+              hiresRating: updatedUser.hiresRating
+            };
+          } else {
+            console.log("No user found for id:", token.id);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
       }
       return session;
     }
@@ -77,8 +102,9 @@ export const authOptions = {
     signIn: '/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: true, // Enable debug messages for NextAuth.js
 }
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
