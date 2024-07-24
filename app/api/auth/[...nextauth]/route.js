@@ -15,7 +15,7 @@ export const authOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter both email and password")
+          throw new Error("Please enter your email and password")
         }
 
         const user = await prisma.user.findUnique({
