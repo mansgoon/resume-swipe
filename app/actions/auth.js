@@ -88,7 +88,7 @@ export async function logout() {
       if (!user.emailVerified) {
         return { 
           success: false, 
-          message: 'Your email address has not been verified. Please check your inbox for a verification email and follow the instructions to activate your account.'
+          message: 'Your email address has not been verified. Please check your inbox to activate your account.'
         };
       }
   
