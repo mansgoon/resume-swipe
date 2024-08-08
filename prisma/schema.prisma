@@ -17,4 +17,14 @@ model User {
   hiresRating       Int      @default(0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  profile           Profile?
+}
+
+model Profile {
+  id          Int    @id @default(autoincrement())
+  userId      Int    @unique
+  user        User   @relation(fields: [userId], references: [id])
+  displayName String?
+  field       String?
+  aboutMe     String?
 }

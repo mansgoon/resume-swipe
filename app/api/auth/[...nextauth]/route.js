@@ -23,7 +23,7 @@ export const authOptions = {
 
         try {
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email }
+            where: { email: credentials.email },
           });
           console.log("User found:", user ? "Yes" : "No");
 
@@ -48,7 +48,7 @@ export const authOptions = {
           return {
             id: user.id,
             email: user.email,
-            name: user.username,
+            username: user.username,
             hiresRating: user.hiresRating,
           };
         } catch (error) {
@@ -66,6 +66,8 @@ export const authOptions = {
       console.log("JWT callback called. User:", user ? "Yes" : "No");
       if (user) {
         token.id = user.id;
+        token.email = user.email;
+        token.username = user.username;
         token.hiresRating = user.hiresRating;
       }
       return token;
@@ -88,6 +90,14 @@ export const authOptions = {
               name: updatedUser.username,
               hiresRating: updatedUser.hiresRating
             };
+
+            // Fetch profile separately
+            const profile = await prisma.profile.findUnique({
+              where: { userId: updatedUser.id }
+            });
+            if (profile) {
+              session.user.profile = profile;
+            }
           } else {
             console.log("No user found for id:", token.id);
           }
