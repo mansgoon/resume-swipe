@@ -35,9 +35,9 @@ export default function ProfilePage() {
     <div className="flex flex-col min-h-screen bg-[#121212] text-white">
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-8 max-w-2xl mx-auto mt-20">
+        <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-4 max-w-2xl mx-auto mt-20">
           <div className="flex items-center mb-6">
-            <div className="relative w-20 h-20 rounded-full overflow-hidden bg-[#2D9CDB] mr-6">
+            <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#2D9CDB] mr-6">
               <Image 
                 src={session?.user?.image || '/avatar.jpg'}
                 alt="Profile"
@@ -46,7 +46,7 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <h1 className="text-3xl font-bold mb-2">{session?.user?.name || 'Not found'}</h1>
+              <h1 className="text-2xl font-bold mb-2">{session?.user?.name || 'Not found'}</h1>
               <div className="flex items-center space-x-4">
                 <span className="bg-[#333333] text-[#2D9CDB] px-3 py-1 rounded-full text-sm">
                   🎉 {session?.user?.hiresRating || 0} hires
@@ -77,7 +77,7 @@ export default function ProfilePage() {
             </div>
             <div className="py-4">
               <p className={`text-gray-${aboutMe === 'Add a brief description about yourself' ? '400' : '300'}`}>
-                {aboutMe}
+                {session.user.profile?.aboutMe}
               </p>
             </div>
           </div>
