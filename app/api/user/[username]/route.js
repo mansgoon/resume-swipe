@@ -6,12 +6,12 @@ import { NextResponse } from 'next/server';
 export async function GET(request, { params }) {
   console.log('API route called with params:', params);
 
-  let username = params.username;
+  let username = params.username?.toLowerCase();
   
   // If username is 'undefined', try to get it from query params
   if (username === 'undefined') {
     const { searchParams } = new URL(request.url);
-    username = searchParams.get('username');
+    username = searchParams.get('username')?.toLowerCase();
     console.log('Username from query params:', username);
   }
 
@@ -19,7 +19,7 @@ export async function GET(request, { params }) {
   if (!username || username === 'undefined') {
     const session = await getServerSession(authOptions);
     if (session?.user?.username) {
-      username = session.user.username;
+      username = session.user.username.toLowerCase();
       console.log('Username from session:', username);
     } else {
       console.error('No valid username provided and no session available');
@@ -29,8 +29,13 @@ export async function GET(request, { params }) {
 
   try {
     console.log('Attempting to find user with username:', username);
-    const user = await prisma.user.findUnique({
-      where: { username },
+    const user = await prisma.user.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive'
+        }
+      },
       include: { profile: true },
     });
 

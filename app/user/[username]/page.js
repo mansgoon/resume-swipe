@@ -11,7 +11,7 @@ import Footer from '@/components/footer';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const fieldColors = {
-    'Tech': '#2196F3',
+    'Tech': '#AA8FF8',
     'Finance': '#4CAF50',
     'Healthcare': '#E91E63',
     'Education': '#9C27B0',
@@ -75,6 +75,7 @@ export default function ProfilePage() {
   }
 
   const { name, image, hiresRating, profile, username } = profileData;
+  const displayName = profile?.displayName || name || username || 'Not found';
   const aboutMe = profile?.aboutMe || 'Add a brief description about yourself';
   const field = profile?.field || '';
 
@@ -84,7 +85,7 @@ export default function ProfilePage() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-4 max-w-2xl mx-auto mt-20">
           <div className="flex items-center mb-6">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#2D9CDB] mr-6">
+            <div className="relative w-20 h-20 rounded-full overflow-hidden bg-[#2D9CDB] mr-6">
               <Image 
                 src={image || '/avatar.jpg'}
                 alt="Profile"
@@ -93,8 +94,8 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <h1 className="text-2xl font-bold mb-2">{name || username || 'Not found'}</h1>
-              <p className="text-gray-400 mb-2">@{username}</p>
+              <h1 className="text-2xl font-bold">{displayName}</h1>
+              <p className="text-gray-400 text-sm mb-2">@{username}</p>
               <div className="flex items-center space-x-4">
                 <span className="bg-[#333333] text-[#2D9CDB] px-3 py-1 rounded text-sm">
                   🎉 {hiresRating || 0} hires

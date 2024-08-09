@@ -13,50 +13,55 @@ import { signOut } from 'next-auth/react'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function register(username, email, password) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1d' });
-  
-    try {
-      // Check if username already exists
-      const existingUsername = await prisma.user.findUnique({
-        where: { username },
-      });
-  
-      if (existingUsername) {
-        return { success: false, message: 'Username is already taken. Please choose a different username.' };
-      }
-  
-      // Check if email already exists
-      const existingEmail = await prisma.user.findUnique({
-        where: { email },
-      });
-  
-      if (existingEmail) {
-        return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
-      }
-  
-      const user = await prisma.user.create({
-        data: {
-          username,
-          email,
-          password: hashedPassword,
-          verificationToken,
-        },
-      });
-  
-      await sendVerificationEmail(email, verificationToken);
-  
-      return { success: true, message: 'User registered successfully. Please check your email to verify your account.' };
-    } catch (error) {
-      console.error('Registration error:', error);
-      
-      if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-        return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
-      }
-      
-      return { success: false, message: 'Registration failed. Please try again.' };
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+  try {
+    // Check if username already exists (case-insensitive)
+    const existingUsername = await prisma.user.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive'
+        }
+      },
+    });
+
+    if (existingUsername) {
+      return { success: false, message: 'Username is already taken. Please choose a different username.' };
     }
+
+    // Check if email already exists
+    const existingEmail = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingEmail) {
+      return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
+    }
+
+    const user = await prisma.user.create({
+      data: {
+        username: username.toLowerCase(), // Store username in lowercase
+        email,
+        password: hashedPassword,
+        verificationToken,
+      },
+    });
+
+    await sendVerificationEmail(email, verificationToken);
+
+    return { success: true, message: 'User registered successfully. Please check your email to verify your account.' };
+  } catch (error) {
+    console.error('Registration error:', error);
+    
+    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+      return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
+    }
+    
+    return { success: false, message: 'Registration failed. Please try again.' };
   }
+}
 
 export async function logout() {
     try {
