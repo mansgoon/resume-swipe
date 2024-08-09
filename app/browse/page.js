@@ -65,7 +65,7 @@ const BrowsePage = () => {
             </div>
 
             <div className="bg-[#1e1e1e] rounded-lg p-4 mb-10 shadow-md">
-              <div className="comments-container max-h-[200px] overflow-y-auto mb-4 pr-2">
+              <div className="comments-container max-h-[400px] overflow-y-auto mb-4 pr-2">
                 {comments.map((comment, index) => (
                   <div key={index} className="mb-4">
                     <span className="font-semibold text-[#3498db]">{comment.author}</span>
@@ -73,7 +73,7 @@ const BrowsePage = () => {
                   </div>
                 ))}
               </div>
-              <span className="text-[#3498db] cursor-pointer text-sm font-medium" onClick={viewMoreComments}>View more comments</span>
+              <span className="text-[#e0e0e0] cursor-pointer text-sm font-medium" onClick={viewMoreComments}>View more comments</span>
               <form className="flex flex-col sm:flex-row mt-4" onSubmit={addComment}>
                 <input 
                   type="text" 

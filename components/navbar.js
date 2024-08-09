@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const dropdownRef = useRef(null);
 
@@ -76,7 +76,7 @@ const Navbar = () => {
                 </button>
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-bg-card rounded-md shadow-lg py-1">
-                    <Link href="/profile" className="block px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Profile</Link>
+                    <Link href={`/user/${session.user.name}`} className="block px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Profile</Link>
                     <Link href="/settings" className="block px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Settings</Link>
                     <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-text hover:bg-primary hover:text-bg">Logout</button>
                   </div>
@@ -150,7 +150,7 @@ const Navbar = () => {
             {session ? (
               <>
                 <li>
-                  <Link href="/profile" className="text-text hover:text-primary transition-colors text-lg font-medium" onClick={toggleMenu}>
+                  <Link href={`/user/${session.user.name}`} className="text-text hover:text-primary transition-colors text-lg font-medium" onClick={toggleMenu}>
                     Profile
                   </Link>
                 </li>

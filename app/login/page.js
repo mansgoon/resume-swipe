@@ -34,7 +34,7 @@ const LoginPage = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        router.push('/profile'); // Redirect to dashboard or home page
+        router.push('/'); // Redirect to home page
       }
     } catch (error) {
       setError('An unexpected error occurred. Please try again.');

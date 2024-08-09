@@ -74,55 +74,53 @@ export async function logout() {
     }
   }
 
-  export async function login(email, password) {
-    try {
-      const user = await prisma.user.findUnique({ where: { email } });
-  
-      if (!user) {
-        return { 
-          success: false, 
-          message: 'No account found with this email address. Please check your email or sign up for a new account.'
-        };
-      }
-  
-      if (!user.emailVerified) {
-        return { 
-          success: false, 
-          message: 'Your email address has not been verified. Please check your inbox to activate your account.'
-        };
-      }
-  
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return { 
-          success: false, 
-          message: 'Incorrect password. Please try again or use the "Forgot Password" option if you need to reset it.'
-        };
-      }
-  
-      // Generate and set session token
-      const token = jwt.sign(
-        { userId: user.id, email: user.email },
-        process.env.NEXTAUTH_SECRET,
-        { expiresIn: '1d' }
-      );
-  
-      cookies().set('next-auth.session-token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 86400 // 1 day in seconds
-      });
-  
-      return { success: true, message: 'Logged in successfully. Welcome back!' };
-    } catch (error) {
-      console.error('Login error:', error);
+export async function login(email, password) {
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
       return { 
         success: false, 
-        message: 'An unexpected error occurred during login. Please try again later or contact support if the problem persists.'
+        message: 'No account found with this email address. Please check your email or sign up for a new account.'
       };
     }
+
+    if (!user.emailVerified) {
+      return { 
+        success: false, 
+        message: 'Your email address has not been verified. Please check your inbox to activate your account.'
+      };
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return { 
+        success: false, 
+        message: 'Incorrect password. Please try again or use the "Forgot Password" option if you need to reset it.'
+      };
+    }
+
+    // Use NextAuth's signIn method
+    const result = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (result.error) {
+      return { success: false, message: result.error };
+    }
+
+    // Redirect to the user's profile page
+    return { success: true, message: 'Logged in successfully. Redirecting to your profile...', username: user.username };
+  } catch (error) {
+    console.error('Login error:', error);
+    return { 
+      success: false, 
+      message: 'An unexpected error occurred during login. Please try again later or contact support if the problem persists.'
+    };
   }
+}
 
 export async function verifyEmail(token) {
     try {
