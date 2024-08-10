@@ -6,16 +6,16 @@ import { NextResponse } from 'next/server';
 export async function GET(request, { params }) {
   console.log('API route called with params:', params);
 
-  let username = params.username?.toLowerCase();
-  
-  // If username is 'undefined', try to get it from query params
-  if (username === 'undefined') {
+  let username = params?.username?.toLowerCase();
+
+  // Handle undefined string case and fallback to query params
+  if (!username || username === 'undefined') {
     const { searchParams } = new URL(request.url);
     username = searchParams.get('username')?.toLowerCase();
     console.log('Username from query params:', username);
   }
 
-  // If still no username, try to get it from the session
+  // Fallback to session if username still not found
   if (!username || username === 'undefined') {
     const session = await getServerSession(authOptions);
     if (session?.user?.username) {
@@ -53,7 +53,7 @@ export async function GET(request, { params }) {
       profile: user.profile,
     });
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    console.error('Error fetching user data:', error.message);
     return NextResponse.json({ message: 'Error fetching user data', error: error.message }, { status: 500 });
   }
 }
