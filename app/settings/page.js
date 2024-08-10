@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -33,6 +34,9 @@ const SettingsPage = () => {
   const [profileMessage, setProfileMessage] = useState({ type: '', message: '' });
   const [isSubmittingAccount, setIsSubmittingAccount] = useState(false);
   const [isSubmittingProfile, setIsSubmittingProfile] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef(null);
   const { data: session, status, update } = useSession();
 
   useEffect(() => {
@@ -42,6 +46,7 @@ const SettingsPage = () => {
       setDisplayName(session.user.profile?.displayName || '');
       setField(session.user.profile?.field || '');
       setAboutMe(session.user.profile?.aboutMe || '');
+      setAvatarUrl(session.user.image || '');
     }
   }, [session]);
 
@@ -63,7 +68,7 @@ const SettingsPage = () => {
   
       const data = await response.json();
       setAccountMessage({ type: 'success', message: 'Account updated successfully!' });
-      // Optionally update the session here if needed
+      await update(); // Update the session
     } catch (error) {
       console.error('Error updating account:', error);
       setAccountMessage({ type: 'error', message: error.message });
@@ -77,32 +82,56 @@ const SettingsPage = () => {
     setProfileMessage({ type: '', message: '' });
     setIsSubmittingProfile(true);
     try {
-      console.log('Submitting profile update:', { displayName, field, aboutMe });
-  
       const response = await fetch('/api/user/update-profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ displayName, field, aboutMe }),
       });
   
-      console.log('Response status:', response.status);
-  
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error response:', errorData);
         throw new Error(errorData.message || 'Failed to update profile');
       }
   
       const data = await response.json();
-      console.log('Profile updated successfully:', data);
-  
       setProfileMessage({ type: 'success', message: 'Profile updated successfully!' });
-      // Optionally update the session here if needed
+      await update(); // Update the session
     } catch (error) {
       console.error('Error updating profile:', error);
       setProfileMessage({ type: 'error', message: error.message });
     } finally {
       setIsSubmittingProfile(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploadingAvatar(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/user/update-avatar', {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update avatar');
+      }
+
+      const { image } = await response.json();
+      setAvatarUrl(image);
+      await update(); // Update the session
+      setProfileMessage({ type: 'success', message: 'Avatar updated successfully!' });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      setProfileMessage({ type: 'error', message: error.message });
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
@@ -185,6 +214,35 @@ const SettingsPage = () => {
                   <Alert message={profileMessage.message} type={profileMessage.type} />
                 )}
                 <form className="space-y-4" onSubmit={handleProfileSubmit}>
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="relative w-20 h-20">
+                      <Image
+                        src={avatarUrl || '/avatar.jpg'}
+                        alt="Profile"
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-full"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        ref={fileInputRef}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current.click()}
+                        className="bg-primary text-bg px-4 py-2 rounded hover:bg-secondary transition duration-300"
+                        disabled={isUploadingAvatar}
+                      >
+                        {isUploadingAvatar ? <ButtonSpinner /> : null}
+                        {isUploadingAvatar ? 'Uploading...' : 'Change Avatar'}
+                      </button>
+                    </div>
+                  </div>
                   <div>
                     <label htmlFor="display-name" className="block mb-1">Display Name</label>
                     <input 

@@ -85,7 +85,7 @@ export default function ProfilePage() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-4 max-w-2xl mx-auto mt-20">
           <div className="flex items-center mb-6">
-            <div className="relative w-20 h-20 rounded-full overflow-hidden bg-[#2D9CDB] mr-6">
+            <div className="relative w-20 h-20 rounded-full overflow-hidden bg-[#333333] mr-6">
               <Image 
                 src={image || '/avatar.jpg'}
                 alt="Profile"

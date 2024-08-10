@@ -66,13 +66,15 @@ const Navbar = () => {
                   onClick={toggleDropdown}
                   className="flex items-center focus:outline-none"
                 >
+                <div className="w-[38px] h-[38px] rounded-full overflow-hidden">
                   <Image
                     src={session.user.image || '/avatar.jpg'}
                     alt="User Avatar"
                     width={38}
                     height={38}
-                    className="rounded-full"
+                    className="object-cover w-full h-full"
                   />
+                </div>
                 </button>
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-bg-card rounded-md shadow-lg py-1">

@@ -69,6 +69,10 @@ export const authOptions = {
         token.email = user.email;
         token.username = user.username;
         token.hiresRating = user.hiresRating;
+        // Only set image if it exists
+        if (user.image) {
+          token.image = user.image;
+        }
       }
       return token;
     },
@@ -88,9 +92,22 @@ export const authOptions = {
               ...session.user,
               id: updatedUser.id,
               name: updatedUser.username,
-              hiresRating: updatedUser.hiresRating
+              hiresRating: updatedUser.hiresRating,
             };
-
+  
+            // Separately fetch the image field
+            try {
+              const userWithImage = await prisma.user.findUnique({
+                where: { id: parseInt(token.id) },
+                select: { image: true }
+              });
+              if (userWithImage && userWithImage.image) {
+                session.user.image = userWithImage.image;
+              }
+            } catch (imageError) {
+              console.error('Error fetching user image:', imageError);
+            }
+  
             // Fetch profile separately
             const profile = await prisma.profile.findUnique({
               where: { userId: updatedUser.id }

@@ -15,15 +15,16 @@ model User {
   emailVerified     Boolean  @default(false)
   verificationToken String?
   hiresRating       Int      @default(0)
+  image             String?  // Add this line
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   profile           Profile?
 }
 
 model Profile {
-  id          Int    @id @default(autoincrement())
-  userId      Int    @unique
-  user        User   @relation(fields: [userId], references: [id])
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique
+  user        User    @relation(fields: [userId], references: [id])
   displayName String?
   field       String?
   aboutMe     String?
