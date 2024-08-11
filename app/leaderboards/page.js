@@ -5,11 +5,11 @@ import Footer from '@/components/footer';
 
 const Leaderboards = () => {
   return (
-    <div className="font-sans bg-bg text-text">
+    <div className="font-sans bg-bg text-text min-h-screen flex flex-col">
         <Navbar />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 mt-16">
+      <main className="flex-grow container mx-auto px-4 py-8 mt-16">
         <div className="browse-container">
           {/* Search Bar */}
           <div className="search-bar mb-6">
@@ -63,20 +63,19 @@ const Leaderboards = () => {
           </div>
 
           {/* Pagination */}
-        <div className="pagination mt-8 flex justify-center space-x-4">
-        <button className="flex items-center justify-center text-text hover:text-primary transition-colors bg-bg-card border border-bg-section1 rounded-md px-4 py-2 w-32">
-            <ChevronLeft size={20} className="mr-2" />
-            <span>Previous</span>
-        </button>
-        <button className="flex items-center justify-center text-text hover:text-primary transition-colors bg-bg-card border border-bg-section1 rounded-md px-4 py-2 w-32">
-            <span>Next</span>
-            <ChevronRight size={20} className="ml-2" />
-        </button>
-        </div>
+          <div className="pagination mt-8 flex justify-center space-x-4">
+            <button className="flex items-center justify-center text-text hover:text-primary transition-colors bg-bg-card border border-bg-section1 rounded-md px-4 py-2 w-32">
+                <ChevronLeft size={20} className="mr-2" />
+                <span>Previous</span>
+            </button>
+            <button className="flex items-center justify-center text-text hover:text-primary transition-colors bg-bg-card border border-bg-section1 rounded-md px-4 py-2 w-32">
+                <span>Next</span>
+                <ChevronRight size={20} className="ml-2" />
+            </button>
+          </div>
         </div>
       </main>
 
-      <div className="mt-12"></div>
       <Footer />
     </div>
   );

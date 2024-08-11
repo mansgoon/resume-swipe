@@ -33,7 +33,7 @@ export async function PUT(request) {
     // Upload file to Supabase Storage
     const { data, error } = await supabase
       .storage
-      .from('avatars') // Replace with your bucket name
+      .from('avatars')
       .upload(fileName, buffer, {
         contentType: file.type,
         upsert: true

@@ -79,7 +79,7 @@ const BrowsePage = () => {
                   type="text" 
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="flex-grow bg-[#2c2c2c] border border-[#333] rounded-full py-2 px-4 text-[#e0e0e0] text-sm mb-2 sm:mb-0" 
+                  className="flex-grow bg-[#2c2c2c] border border-bg-section1 rounded focus:outline-none focus:border-[#3F3F3F] rounded-full py-2 px-4 text-[#e0e0e0] text-sm mb-2 sm:mb-0" 
                   placeholder="Add a comment..." 
                   required 
                 />
