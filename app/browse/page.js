@@ -137,7 +137,7 @@ const BrowsePage = () => {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          background-color: #333333;
+          background-color: #1e1e1e;
           border-radius: 1%;
           background-size: cover;
           background-position: center;

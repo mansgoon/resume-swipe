@@ -5,8 +5,8 @@ import { Button } from '@react-email/button';
 const EmailTemplate = ({ verificationLink }) => (
   <Html lang="en">
     <div style={{
-      backgroundColor: '#1a1a1a',
-      color: '#ffffff',
+      backgroundColor: '#ffffff',
+      color: '#333333',
       fontFamily: 'Arial, sans-serif',
       padding: '40px 20px',
       maxWidth: '600px',
@@ -15,9 +15,9 @@ const EmailTemplate = ({ verificationLink }) => (
       <table width="100%" cellPadding="0" cellSpacing="0" style={{ marginBottom: '20px' }}>
         <tr>
           <td style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src="https://resume-swipe.vercel.app/logo.png" alt="ResumeSwipe Logo" width="38" height="38" style={{ marginRight: '10px' }} />
+            <img src="https://cdn.builder.io/api/v1/image/assets%2F6733664189124df1a0a8060cf76dde25%2Fb11675d893bd40138e98cba9da8e290c" alt="ResumeSwipe Logo" width="36" height="36" style={{ marginRight: '10px' }} />
             <span style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              <span style={{ color: '#e5e7eb' }}>resume</span>
+              <span style={{ color: '#333333' }}>resume</span>
               <span style={{ color: '#3498db' }}>swipe</span>
             </span>
           </td>
@@ -29,7 +29,7 @@ const EmailTemplate = ({ verificationLink }) => (
         marginBottom: '30px',
         textAlign: 'center',
       }}>
-        Thank you for joining our community. We&apos;re excited to have you on board!
+        Welcome to our community! We're thrilled to have you join us.
         To get started, please verify your email address by clicking the button below.
       </p>
       <table width="100%" cellPadding="0" cellSpacing="0">
@@ -55,16 +55,16 @@ const EmailTemplate = ({ verificationLink }) => (
       </table>
       <p style={{
         fontSize: '14px',
-        color: '#9ca3af',
+        color: '#666666',
         marginTop: '30px',
         textAlign: 'center',
       }}>
-        If you didn&apos;t create an account with ResumeSwipe, you can safely ignore this email.
+        If you didn't create an account with ResumeSwipe, please disregard this email.
       </p>
-      <hr style={{ borderColor: '#374151', margin: '30px 0' }} />
+      <hr style={{ borderColor: '#e0e0e0', margin: '30px 0' }} />
       <p style={{
         fontSize: '12px',
-        color: '#9ca3af',
+        color: '#888888',
         textAlign: 'center',
       }}>
         © 2024 ResumeSwipe. All rights reserved.
