@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Navbar from '@/components/navbar';
+import ResumeSwiper from '@/components/ResumeSwiper';
 
 const BrowsePage = () => {
   const [comments, setComments] = useState([
@@ -19,10 +20,6 @@ const BrowsePage = () => {
       commentsContainer.scrollTop = commentsContainer.scrollHeight;
     }
   }, [comments]);
-
-  const swipeResume = (direction) => {
-    alert(`Swiped ${direction}! Loading next resume...`);
-  };
 
   const showResumeInfo = () => {
     alert("Showing more information about this resume...");
@@ -50,18 +47,16 @@ const BrowsePage = () => {
       <div className="min-h-screen bg-[#121212] text-[#e0e0e0] font-sans">
         <Navbar />
 
-        <main className="pt-28 pb-10">
+        <main className="pt-28 pb-10 relative z-0">
           <div className="max-w-2xl mx-auto px-4">
-            <h1 className="text-4xl text-center mb-10 font-semibold">Swipe Resumes</h1>
+            {/* <h1 className="text-4xl text-center mb-10 font-semibold">Swipe Resumes</h1> */}
 
-            <div className="bg-[#1e1e1e] rounded-lg overflow-hidden shadow-lg mb-5 aspect-[4/5]">
-              <iframe className="w-full h-full border-none" src="" title="Placeholder Resume"></iframe>
+            <div className="relative z-10">
+              <ResumeSwiper />
             </div>
 
             <div className="flex justify-center space-x-8 mb-5">
-              <button onClick={() => swipeResume('left')} className="bg-[#1e1e1e] rounded-full w-16 h-16 flex justify-center items-center text-3xl cursor-pointer transition-transform duration-300 hover:scale-110 text-[#e74c3c]">✕</button>
               <button onClick={showResumeInfo} className="bg-[#1e1e1e] rounded-full w-16 h-16 flex justify-center items-center text-3xl cursor-pointer transition-transform duration-300 hover:scale-110 text-[#3498db]">ℹ</button>
-              <button onClick={() => swipeResume('right')} className="bg-[#1e1e1e] rounded-full w-16 h-16 flex justify-center items-center text-3xl cursor-pointer transition-transform duration-300 hover:scale-110 text-[#2ecc71]">♥</button>
             </div>
 
             <div className="bg-[#1e1e1e] rounded-lg p-4 mb-10 shadow-md">
@@ -126,6 +121,26 @@ const BrowsePage = () => {
         }
         .comments-container::-webkit-scrollbar-thumb:hover {
           background-color: #2980b9;
+        }
+
+        #board {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          overflow: hidden;
+          background-color: #1e1e1e;
+        }
+        .card {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: #333333;
+          border-radius: 1%;
+          background-size: cover;
+          background-position: center;
         }
       `}</style>
     </>

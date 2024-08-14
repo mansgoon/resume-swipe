@@ -9,7 +9,7 @@ import Footer from '@/components/footer';
 const LoginPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    email: '',
+    usernameOrEmail: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -27,7 +27,7 @@ const LoginPage = () => {
     try {
       const result = await signIn('credentials', {
         redirect: false,
-        email: formData.email,
+        usernameOrEmail: formData.usernameOrEmail,
         password: formData.password,
       });
 
@@ -56,12 +56,12 @@ const LoginPage = () => {
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-text font-bold mb-2">Email</label>
+              <label htmlFor="usernameOrEmail" className="block text-text font-bold mb-2">Username or Email</label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                id="usernameOrEmail"
+                name="usernameOrEmail"
+                value={formData.usernameOrEmail}
                 onChange={handleChange}
                 className="w-full px-3 py-2 bg-[#333] border border-[#555] rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-text"
                 required

@@ -10,26 +10,33 @@ export const authOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
+        usernameOrEmail: { label: "Username or Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log("Authorize function called with email:", credentials?.email);
+        console.log("Authorize function called with usernameOrEmail:", credentials?.usernameOrEmail);
 
-        if (!credentials?.email || !credentials?.password) {
-          console.log("Missing email or password");
-          throw new Error("Please enter your email and password");
+        if (!credentials?.usernameOrEmail || !credentials?.password) {
+          console.log("Missing username/email or password");
+          throw new Error("Please enter your username/email and password");
         }
 
         try {
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+          // Try to find user by email or username
+          const user = await prisma.user.findFirst({
+            where: {
+              OR: [
+                { email: credentials.usernameOrEmail },
+                { username: credentials.usernameOrEmail.toLowerCase() } // Assuming usernames are stored in lowercase
+              ]
+            },
           });
+
           console.log("User found:", user ? "Yes" : "No");
 
           if (!user) {
-            console.log("No account found for email:", credentials.email);
-            throw new Error("No account found with this email address");
+            console.log("No account found for:", credentials.usernameOrEmail);
+            throw new Error("No account found with this username or email address");
           }
 
           if (!user.emailVerified) {

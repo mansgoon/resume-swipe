@@ -13,55 +13,55 @@ import { signOut } from 'next-auth/react'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function register(username, email, password) {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-  try {
-    // Check if username already exists (case-insensitive)
-    const existingUsername = await prisma.user.findFirst({
-      where: {
-        username: {
-          equals: username,
-          mode: 'insensitive'
-        }
-      },
-    });
-
-    if (existingUsername) {
-      return { success: false, message: 'Username is already taken. Please choose a different username.' };
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  
+    try {
+      // Check if username already exists (case-insensitive)
+      const existingUsername = await prisma.user.findFirst({
+        where: {
+          username: {
+            equals: username,
+            mode: 'insensitive'
+          }
+        },
+      });
+  
+      if (existingUsername) {
+        return { success: false, message: 'Username is already taken. Please choose a different username.' };
+      }
+  
+      // Check if email already exists
+      const existingEmail = await prisma.user.findUnique({
+        where: { email },
+      });
+  
+      if (existingEmail) {
+        return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
+      }
+  
+      const user = await prisma.user.create({
+        data: {
+          username: username.toLowerCase(), // Store username in lowercase
+          email,
+          password: hashedPassword,
+          verificationToken,
+        },
+      });
+  
+      await sendVerificationEmail(email, verificationToken);
+  
+      return { success: true, message: 'User registered successfully. Please check your email to verify your account.' };
+    } catch (error) {
+      console.error('Registration error:', error);
+      
+      if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+        return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
+      }
+      
+      return { success: false, message: 'Registration failed. Please try again.' };
     }
-
-    // Check if email already exists
-    const existingEmail = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingEmail) {
-      return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
-    }
-
-    const user = await prisma.user.create({
-      data: {
-        username: username.toLowerCase(), // Store username in lowercase
-        email,
-        password: hashedPassword,
-        verificationToken,
-      },
-    });
-
-    await sendVerificationEmail(email, verificationToken);
-
-    return { success: true, message: 'User registered successfully. Please check your email to verify your account.' };
-  } catch (error) {
-    console.error('Registration error:', error);
-    
-    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-      return { success: false, message: 'An account with this email address already exists. Please log in or use a different email.' };
-    }
-    
-    return { success: false, message: 'Registration failed. Please try again.' };
   }
-}
 
 export async function logout() {
     try {
@@ -79,53 +79,60 @@ export async function logout() {
     }
   }
 
-export async function login(email, password) {
-  try {
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    if (!user) {
+  export async function login(usernameOrEmail, password) {
+    try {
+      const user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: usernameOrEmail },
+            { username: usernameOrEmail.toLowerCase() }
+          ]
+        }
+      });
+  
+      if (!user) {
+        return { 
+          success: false, 
+          message: 'No account found with this username or email address. Please check your credentials or sign up for a new account.'
+        };
+      }
+  
+      if (!user.emailVerified) {
+        return { 
+          success: false, 
+          message: 'Your email address has not been verified. Please check your inbox to activate your account.'
+        };
+      }
+  
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return { 
+          success: false, 
+          message: 'Incorrect password. Please try again or use the "Forgot Password" option if you need to reset it.'
+        };
+      }
+  
+      // Use NextAuth's signIn method
+      const result = await signIn('credentials', {
+        redirect: false,
+        usernameOrEmail,
+        password,
+      });
+  
+      if (result.error) {
+        return { success: false, message: result.error };
+      }
+  
+      // Redirect to the user's profile page
+      return { success: true, message: 'Logged in successfully. Redirecting to your profile...', username: user.username };
+    } catch (error) {
+      console.error('Login error:', error);
       return { 
         success: false, 
-        message: 'No account found with this email address. Please check your email or sign up for a new account.'
+        message: 'An unexpected error occurred during login. Please try again later or contact support if the problem persists.'
       };
     }
-
-    if (!user.emailVerified) {
-      return { 
-        success: false, 
-        message: 'Your email address has not been verified. Please check your inbox to activate your account.'
-      };
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return { 
-        success: false, 
-        message: 'Incorrect password. Please try again or use the "Forgot Password" option if you need to reset it.'
-      };
-    }
-
-    // Use NextAuth's signIn method
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-
-    if (result.error) {
-      return { success: false, message: result.error };
-    }
-
-    // Redirect to the user's profile page
-    return { success: true, message: 'Logged in successfully. Redirecting to your profile...', username: user.username };
-  } catch (error) {
-    console.error('Login error:', error);
-    return { 
-      success: false, 
-      message: 'An unexpected error occurred during login. Please try again later or contact support if the problem persists.'
-    };
   }
-}
 
 export async function verifyEmail(token) {
     try {

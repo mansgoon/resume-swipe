@@ -13,7 +13,7 @@ const Leaderboards = () => {
         <div className="browse-container">
           {/* Search Bar */}
           <div className="search-bar mb-6">
-            <input type="text" placeholder="Search" className="w-full p-2 bg-bg-card text-text bg-bg-section2 border border-bg-section1 rounded focus:outline-none focus:border-primary" />
+            <input type="text" placeholder="Search" className="w-full p-2 bg-bg-card text-text border border-bg-section1 rounded focus:outline-none focus:border-[#3F3F3F]" />
           </div>
 
           {/* Filters */}
@@ -49,13 +49,13 @@ const Leaderboards = () => {
                   <p className="text-text mt-2">{resume.experience}</p>
                     <div className="tags mt-3 flex flex-wrap gap-2">
                     {resume.tags.map((tag, tagIndex) => (
-                        <span key={tagIndex} className="tag bg-bg-section1 text-secondary px-2 py-1 rounded text-sm inline-block">
+                        <span key={tagIndex} className="tag bg-[#2c2c2c] text-secondary px-2 py-1 rounded text-sm inline-block">
                         {tag}
                         </span>
                     ))}
                     </div>
                   <div className="resume-meta mt-4 text-sm text-gray-400">
-                    Posted {resume.days} day{resume.days !== 1 ? 's' : ''} ago by u/{resume.user} | {resume.comments} comment{resume.comments !== 1 ? 's' : ''}
+                    Posted {resume.days} day{resume.days !== 1 ? 's' : ''} ago by @{resume.user} | {resume.comments} comment{resume.comments !== 1 ? 's' : ''}
                   </div>
                 </div>
               </div>

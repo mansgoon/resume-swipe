@@ -9,7 +9,7 @@ const poppins = Poppins({
 })
 
 export const metadata = {
-  title: "ResumeSwipe",
+  title: "resumeswipe",
   description: "ResumeSwipe - A Collaborative Resume Review Platform",
 };
 
