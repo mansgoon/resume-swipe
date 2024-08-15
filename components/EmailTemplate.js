@@ -29,7 +29,7 @@ const EmailTemplate = ({ verificationLink }) => (
         marginBottom: '30px',
         textAlign: 'center',
       }}>
-        Welcome to our community! We're thrilled to have you join us.
+        Welcome to our community! We&apos;re thrilled to have you join us.
         To get started, please verify your email address by clicking the button below.
       </p>
       <table width="100%" cellPadding="0" cellSpacing="0">
@@ -59,7 +59,7 @@ const EmailTemplate = ({ verificationLink }) => (
         marginTop: '30px',
         textAlign: 'center',
       }}>
-        If you didn't create an account with ResumeSwipe, please disregard this email.
+        If you didn&apos;t create an account with ResumeSwipe, please disregard this email.
       </p>
       <hr style={{ borderColor: '#e0e0e0', margin: '30px 0' }} />
       <p style={{
