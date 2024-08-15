@@ -74,7 +74,7 @@ export default function ProfilePage() {
       ) : !profileData ? (
         <div className="flex-grow flex items-center justify-center">User not found</div>
       ) : (
-        <main className="flex-grow container mx-auto px-4 py-8">
+        <main className="flex-grow container mx-auto px-3 py-9">
           <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 max-w-2xl mx-auto mt-20">
             <div className="flex items-center mb-6">
               <div className="relative w-20 h-20 rounded-full overflow-hidden bg-[#333333] mr-6">
@@ -89,12 +89,12 @@ export default function ProfilePage() {
                 <h1 className="text-2xl font-bold">{profileData.profile?.displayName || profileData.name || profileData.username || 'Not found'}</h1>
                 <p className="text-gray-400 text-sm mb-2">@{profileData.username}</p>
                 <div className="flex items-center space-x-4">
-                  <span className="bg-[#333333] text-[#2D9CDB] px-3 py-1 rounded text-sm">
+                  <span className="bg-[#333333] text-[#2D9CDB] px-2 py-1 rounded text-sm">
                     🎉 {profileData.hiresRating || 0} hires
                   </span>
                   {profileData.profile?.field && (
                     <span 
-                      className="font-medium bg-[#333333] px-3 py-1 rounded text-sm"
+                      className="font-medium bg-[#333333] px-2 py-1 rounded text-sm"
                       style={{ color: fieldColors[profileData.profile.field] || '#FFFFFF' }}
                     >
                       {profileData.profile.field}

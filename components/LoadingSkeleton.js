@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LoadingSkeleton = () => (
-  <div className="flex-grow container mx-auto px-4 py-8">
+  <div className="flex-grow container mx-auto px-3 py-9">
     <div className="bg-[#1E1E1E] rounded-lg shadow-lg p-6 max-w-2xl mx-auto mt-20">
       <div className="flex items-center mb-6">
         <div className="w-20 h-20 rounded-full bg-[#333333] mr-6 relative overflow-hidden">
