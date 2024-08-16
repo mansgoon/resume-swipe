@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { ChevronRight, LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -137,41 +138,47 @@ const Navbar = () => {
         }`}
       >
         <div className="flex flex-col h-full pt-20 px-6">
-          <ul className="space-y-4">
+          <ul className="space-y-4 flex-grow">
+            {session && (
+              <li>
+                <Link 
+                  href={`/user/${session.user.name}`} 
+                  className="flex items-center text-text hover:text-primary transition-colors text-lg font-medium py-2" 
+                  onClick={toggleMenu}
+                >
+                  <span>Profile</span>
+                  <ChevronRight className="ml-auto w-5 h-5" />
+                </Link>
+              </li>
+            )}
             {navItems.map((item) => (
               <li key={item}>
                 <Link 
                   href={`/${item.toLowerCase()}`} 
-                  className="text-text hover:text-primary transition-colors text-lg font-medium"
+                  className="flex items-center text-text hover:text-primary transition-colors text-lg font-medium py-2"
                   onClick={toggleMenu}
                 >
-                  {item}
+                  <span>{item}</span>
+                  <ChevronRight className="ml-auto w-5 h-5" />
                 </Link>
               </li>
             ))}
             {session ? (
-              <>
-                <li>
-                  <Link href={`/user/${session.user.name}`} className="text-text hover:text-primary transition-colors text-lg font-medium" onClick={toggleMenu}>
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/settings" className="text-text hover:text-primary transition-colors text-lg font-medium" onClick={toggleMenu}>
-                    Settings
-                  </Link>
-                </li>
-                <li>
-                  <button onClick={handleLogout} className="text-text hover:text-primary transition-colors text-lg font-medium w-full text-left">
-                    Logout
-                  </button>
-                </li>
-              </>
+              <li>
+                <Link 
+                  href="/settings" 
+                  className="flex items-center text-text hover:text-primary transition-colors text-lg font-medium py-2" 
+                  onClick={toggleMenu}
+                >
+                  <span>Settings</span>
+                  <ChevronRight className="ml-auto w-5 h-5" />
+                </Link>
+              </li>
             ) : (
               <li>
                 <Link
                   href="/login"
-                  className="bg-primary hover:bg-blue-600 text-bg font-bold py-2 px-4 rounded-lg transition-colors text-base w-full inline-block text-center"
+                  className="bg-primary hover:bg-blue-600 text-bg font-bold py-3 px-4 rounded-lg transition-colors text-base w-full inline-block text-center mt-4"
                   onClick={toggleMenu}
                 >
                   Login
@@ -179,6 +186,20 @@ const Navbar = () => {
               </li>
             )}
           </ul>
+          {session && (
+            <div className="mt-auto mb-8">
+              <button 
+                onClick={() => {
+                  handleLogout();
+                  toggleMenu();
+                }}
+                className="flex items-center justify-center w-full text-[#E54744] hover:text-[#E26A74] transition-colors text-lg font-medium py-3 px-4  border-[#E54744] bg-[#212121] rounded-lg"
+              >
+                <LogOut className="w-5 h-5 mr-2" />
+                <span>Logout</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>
