@@ -2,27 +2,19 @@
 
 import React, { useState, useRef } from 'react';
 import { Upload } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function UploadForm() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [description, setDescription] = useState('');
-  const [keywords, setKeywords] = useState([]);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const fileInputRef = useRef(null);
-
-  const handleKeywordInput = (e) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      const newKeyword = e.target.value.trim();
-      if (newKeyword && !keywords.includes(newKeyword)) {
-        setKeywords([...keywords, newKeyword]);
-        e.target.value = '';
-      }
-    }
-  };
-
-  const removeKeyword = (keywordToRemove) => {
-    setKeywords(keywords.filter(keyword => keyword !== keywordToRemove));
-  };
 
   const handleFileDrop = (e) => {
     e.preventDefault();
@@ -41,57 +33,89 @@ export default function UploadForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement file upload to Supabase bucket
-    console.log('File:', file);
-    console.log('Description:', description);
-    console.log('Keywords:', keywords);
-    // After successful upload, you can use window.location to redirect
-    // window.location.href = '/profile';
+    setIsLoading(true);
+    setError('');
+
+    if (!file || !title || !content) {
+      setError('Please provide a title, content, and select a file to upload.');
+      setIsLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('description', description);
+
+    try {
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create post');
+      }
+
+      const post = await response.json();
+      router.push(`/browse`); // change later
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      setError(error.message || 'Failed to upload resume. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="upload-container">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+      <div className="form-group mb-4">
+        <label htmlFor="title" className="block text-sm font-medium mb-2 text-gray-300">
+          Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          className="w-full bg-[#333333] border border-bg-section1 rounded text-text p-2 focus:outline-none focus:border-[#3F3F3F] text-white placeholder:text-[#707070]"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter a title for your resume post"
+          required
+        />
+      </div>
+      <div className="form-group mb-4">
+        <label htmlFor="content" className="block text-sm font-medium mb-2 text-gray-300">
+          Content
+        </label>
+        <textarea
+          id="content"
+          className="w-full bg-[#333333] border border-bg-section1 rounded text-text p-2 focus:outline-none focus:border-[#3F3F3F] text-white placeholder:text-[#707070]"
+          rows="4"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Write about your resume or ask for feedback"
+          required
+        ></textarea>
+      </div>
       <div className="form-group mb-4">
         <label htmlFor="description" className="block text-sm font-medium mb-2 text-gray-300">
-          Description
+          Description (optional)
         </label>
         <textarea
           id="description"
           className="w-full bg-[#333333] border border-bg-section1 rounded text-text p-2 focus:outline-none focus:border-[#3F3F3F] text-white placeholder:text-[#707070]"
-          rows="4"
+          rows="2"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="e.g., 'What am I doing wrong?'"
+          placeholder="Additional description or context for your resume"
         ></textarea>
-      </div>
-      <div className="form-group mb-4">
-        <label htmlFor="keywords" className="block text-sm font-medium mb-2 text-gray-300">
-          Keywords (separated by commas)
-        </label>
-        <input
-          type="text"
-          id="keywords"
-          className="w-full bg-[#333333] border border-bg-section1 rounded text-text p-2 focus:outline-none focus:border-[#3F3F3F] text-white placeholder:text-[#707070]"
-          onKeyDown={handleKeywordInput}
-          placeholder="e.g., JavaScript, React, Node.js"
-        />
-        <div id="keywords-container" className="flex flex-wrap mt-2">
-          {keywords.map((keyword, index) => (
-            <span
-              key={index}
-              className="bg-[#2c2c2c] text-secondary px-2 py-1 rounded text-sm inline-block mr-2 mb-2 flex items-center"
-            >
-              {keyword}
-              <button
-                type="button"
-                className="ml-1 focus:outline-none"
-                onClick={() => removeKeyword(keyword)}
-              >
-                ×
-              </button>
-            </span>
-          ))}
-        </div>
       </div>
       <div className="form-group mb-6">
         <div
@@ -118,8 +142,9 @@ export default function UploadForm() {
       <button
         type="submit"
         className="w-full bg-primary hover:bg-blue-600 text-bg font-bold rounded-lg transition-colors text-base py-2 px-4"
+        disabled={isLoading}
       >
-        Upload Resume
+        {isLoading ? 'Uploading...' : 'Upload Resume'}
       </button>
     </form>
   );

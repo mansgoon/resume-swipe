@@ -8,17 +8,19 @@ datasource db {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
-  username          String   @unique
-  email             String   @unique
+  id                Int       @id @default(autoincrement())
+  username          String    @unique
+  email             String    @unique
   password          String
-  emailVerified     Boolean  @default(false)
+  emailVerified     Boolean   @default(false)
   verificationToken String?
-  hiresRating       Int      @default(0)
-  image             String?  // Add this line
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  hiresRating       Int       @default(0)
+  image             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
   profile           Profile?
+  posts             Post[]
+  comments          Comment[]
 }
 
 model Profile {
@@ -28,4 +30,28 @@ model Profile {
   displayName String?
   field       String?
   aboutMe     String?
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  title       String
+  content     String
+  fileUrl     String?
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  comments    Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
 }

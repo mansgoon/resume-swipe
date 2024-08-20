@@ -6,13 +6,38 @@ const DynamicCarousel = dynamic(() => import('./DynamicCarousel'), { ssr: false 
 const ResumeSwiper = () => {
   const boardRef = useRef(null);
   const [isClient, setIsClient] = useState(false);
+  const [resumes, setResumes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const limit = 10; // Number of resumes to fetch at a time
 
   useEffect(() => {
     setIsClient(true);
+    fetchResumes();
   }, []);
 
-  const handleExpand = () => {
-    alert("Expand functionality to be implemented");
+  const fetchResumes = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/posts/fetch-resumes?limit=${limit}&offset=${offset}`);
+      if (!response.ok) throw new Error('Failed to fetch resumes');
+      const data = await response.json();
+      setResumes(prevResumes => [...prevResumes, ...data]);
+      setOffset(prevOffset => prevOffset + data.length);
+    } catch (error) {
+      console.error('Error fetching resumes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExpand = (resumeId) => {
+    alert(`Expand functionality for resume ${resumeId} to be implemented`);
+  };
+
+  const handleSwipedAll = () => {
+    fetchResumes(); // Fetch more resumes when all current ones have been swiped
   };
 
   return (
@@ -22,18 +47,18 @@ const ResumeSwiper = () => {
         ref={boardRef} 
         className="rounded-lg overflow-hidden shadow-lg mb-5 aspect-[4/5]"
       >
-        {/* Plain skeleton container for server-side rendering */}
         {!isClient && (
           <div className="w-full h-full bg-[#1e1e1e] rounded-lg"></div>
         )}
-        {isClient && <DynamicCarousel boardRef={boardRef} />}
+        {isClient && (
+          <DynamicCarousel 
+            boardRef={boardRef} 
+            resumes={resumes} 
+            onExpand={handleExpand}
+            onSwipedAll={handleSwipedAll}
+          />
+        )}
       </div>
-      <button 
-        onClick={handleExpand}
-        className="absolute top-2 right-2 bg-bg-card text-secondary rounded px-2 py-1 flex justify-center items-center text-xs font-medium cursor-pointer transition-transform duration-300 hover:scale-110 z-40"
-      >
-        Expand 🔎
-      </button>
     </div>
   );
 };
